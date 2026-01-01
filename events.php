@@ -28,7 +28,7 @@ if(isset($_GET['delete'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Campus Connect - Events</title>
+    <title>Campus Connect - Events Page</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>

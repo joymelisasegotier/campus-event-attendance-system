@@ -44,7 +44,7 @@ $attendance_percentage = $total_events > 0 ? round(($attended_events / $total_ev
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Campus Connect - Attendance</title>
+    <title>Campus Connect - Attendance Page</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
