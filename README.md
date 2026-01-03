@@ -1,6 +1,6 @@
 # 🎓 CampusConnect
 
-CampusConnect is a campus-based web application designed to help manage **events** and **student attendance** efficiently.  
+CampusConnect: Campus Event and Attendance System is a campus-based web application designed to help manage **events** and **student attendance** efficiently.  
 It aims to improve communication, organization, and record-keeping within the campus.
 
 ---
@@ -8,7 +8,7 @@ It aims to improve communication, organization, and record-keeping within the ca
 ## ✨ Features
 - 📅 Event creation, editing, and deletion  
 - 📝 Attendance tracking  
-- 👤 User authentication (signup & login)  
+- 👤 User authentication (signup option)  
 - 🗄️ Database-driven records  
 
 ---
@@ -42,16 +42,16 @@ Due to the limitations of **GitHub Pages**, PHP and MySQL features cannot run on
 ---
 
 ## 💻 How to Run Locally
-1. Install **XAMPP**
-2. Copy the project folder to:
+1. Downlaod the file as **ZIP**
+2. Extract file and copy the project folder to:
    ```
    C:\xampp\htdocs
-   ```
-3. Import `campus_connect.sql` using **phpMyAdmin**
-4. Start **Apache** and **MySQL**
+    ```
+3. Open **Xampp** and start **Apache** and **MySQL**
+4. Import `campus_connect.sql` using **phpMyAdmin**
 5. Open your browser and go to:
    ```
-   http://localhost/CampusConnect
+   http://localhost/_projectfoldername_
    ```
 
 ---
