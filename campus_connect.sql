@@ -26,6 +26,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `attendance`
 --
+USE campus_connect;
 
 CREATE TABLE `attendance` (
   `id` int(11) NOT NULL,
