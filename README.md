@@ -48,7 +48,7 @@ Due to the limitations of **GitHub Pages**, PHP and MySQL features cannot run on
    C:\xampp\htdocs
     ```
 3. Open **Xampp** and start **Apache** and **MySQL**
-4. Import `campus_connect.sql` using **phpMyAdmin**
+4. Create database named campus_connect then import `campus_connect.sql` using **phpMyAdmin**
 5. Open your browser and go to:
    ```
    http://localhost/_projectfoldername_
