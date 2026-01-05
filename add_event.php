@@ -6,7 +6,7 @@ include 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $title = $_POST['title'] ?? '';
+    $title = trim($_POST['title'] ?? '');
     $desc  = $_POST['description'] ?? '';
 $rawDate = $_POST['date'] ?? '';
 
