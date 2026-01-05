@@ -66,7 +66,8 @@ if(isset($_GET['delete'])) {
 
                         
                         <div class="event-image">
-                            <img src="uploads/<?= $row['image'] ?>" alt="Event Image">
+                            <img src="uploads/<?= $row['image'] ?: 'default.png' ?>" alt="Event Image">
+
                         </div>
 
                         
@@ -132,6 +133,7 @@ if(isset($_GET['delete'])) {
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
 <script src="script.js"></script>
