@@ -1,148 +1,141 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Initialize Data
+let events = JSON.parse(localStorage.getItem('events')) || [];
+let attendance = JSON.parse(localStorage.getItem('attendance')) || [];
 
-    
-    const toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true
-    });
+// Navigation
+function showSection(sectionId) {
+    document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'block';
+    renderAll();
+}
 
-    /* ---------- ADD EVENT ---------- */
-    const eventForm = document.getElementById("eventForm");
+// Render everything
+function renderAll() {
+    renderEvents();
+    renderAttendance();
+    renderDashboard();
+    updateSelectors();
+}
 
-    if (eventForm) {
-        eventForm.addEventListener("submit", e => {
-            e.preventDefault();
-
-            const data = new FormData(eventForm);
-
-            fetch("add_event.php", {
-                method: "POST",
-                body: data
-            })
-            .then(res => res.text())
-            .then(resp => {
-                console.log("SERVER RESPONSE:", resp);
-
-                if (resp.trim() === "success") {
-                    Swal.fire("Success!", "Event added successfully.", "success")
-                        .then(() => location.reload());
-                } else {
-                    Swal.fire("Error", resp, "error");
-                }
-            })
-            .catch(err => {
-                Swal.fire("Error", err.toString(), "error");
-            });
-        });
-    }
-
-    /* ---------- VIEW EVENT DETAILS ---------- */
-    window.viewDetails = function(title, desc, date) {
-        Swal.fire({
-            title: title,
-            html: `<p><b>Date:</b> ${date}</p><p>${desc}</p>`,
-            icon: "info"
-        });
+// --- EVENT MANAGEMENT ---
+const eventForm = document.getElementById('eventForm');
+eventForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('edit-id').value;
+    const newEvent = {
+        id: id ? parseInt(id) : Date.now(),
+        title: document.getElementById('title').value,
+        date: document.getElementById('date').value,
+        description: document.getElementById('description').value
     };
- /* ---------- EDIT / DELETE EVENTS ---------- */
 
-window.deleteEvent = function(id) {
-    Swal.fire({
-        title: "Delete Event?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Delete"
-    }).then(res => {
-        if (res.isConfirmed) {
-            fetch("delete_event.php", {
-                method: "POST",
-                body: new URLSearchParams({ id })
-            })
-            .then(r => r.text())
-            .then(resp => {
-                if (resp.trim() === "success") {
-                    Swal.fire("Deleted!", "", "success")
-                        .then(() => location.reload());
-                }
-            });
-        }
-    });
-};
-
-window.openEditEvent = function(id, title, desc, date) {
-    Swal.fire({
-        title: "Edit Event",
-        html: `
-            <input id="eTitle" class="swal2-input" value="${title}">
-            <input id="eDate" type="datetime-local" class="swal2-input" value="${date}">
-            <textarea id="eDesc" class="swal2-textarea">${desc}</textarea>
-        `,
-        preConfirm: () => ({
-            title: document.getElementById("eTitle").value,
-            date: document.getElementById("eDate").value,
-            description: document.getElementById("eDesc").value
-        })
-    }).then(res => {
-        if (res.isConfirmed) {
-            fetch("edit_event.php", {
-                method: "POST",
-                body: new URLSearchParams({
-                    id,
-                    title: res.value.title,
-                    date: res.value.date,
-                    description: res.value.description
-                })
-            })
-            .then(r => r.text())
-            .then(resp => {
-                if (resp.trim() === "success") {
-                    Swal.fire("Updated!", "", "success")
-                        .then(() => location.reload());
-                }
-            });
-        }
-    });
-};
-
-    /* ---------- MARK ATTENDANCE ---------- */
-    const attendanceForm = document.getElementById("attendanceForm");
-
-    if (attendanceForm) {
-        attendanceForm.addEventListener("submit", e => {
-            e.preventDefault();
-
-            fetch("mark_attendance.php", {
-                method: "POST",
-                body: new FormData(attendanceForm)
-            })
-            .then(r => r.text())
-            .then(res => {
-                if (res.trim() === "success") {
-                    toast.fire({
-                        icon: "success",
-                        title: "Attendance updated"
-                    });
-                    setTimeout(() => location.reload(), 1200);
-                } else {
-                    toast.fire({
-                        icon: "error",
-                        title: "Update failed"
-                    });
-                }
-            });
-        });
+    if (id) {
+        events = events.map(ev => ev.id == id ? newEvent : ev);
+    } else {
+        events.push(newEvent);
     }
 
-    
-    const btn = document.getElementById("getStartedBtn");
-    const modal = document.getElementById("startModal");
-
-    if (btn && modal) {
-        btn.onclick = () => modal.style.display = "flex";
-        modal.onclick = () => modal.style.display = "none";
-    }
-
+    localStorage.setItem('events', JSON.stringify(events));
+    resetEventForm();
+    renderAll();
+    Swal.fire('Success', 'Event saved successfully!', 'success');
 });
+
+function renderEvents() {
+    const list = document.getElementById('events-list');
+    list.innerHTML = events.map(ev => `
+        <div class="event-card">
+            <h3>${ev.title}</h3>
+            <p><strong>Date:</strong> ${new Date(ev.date).toLocaleString()}</p>
+            <p>${ev.description}</p>
+            <div class="event-actions">
+                <button onclick="editEvent(${ev.id})" style="background:green">Edit</button>
+                <button onclick="deleteEvent(${ev.id})" style="background:red">Delete</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function deleteEvent(id) {
+    events = events.filter(ev => ev.id !== id);
+    attendance = attendance.filter(att => att.eventId !== id); // Cleanup attendance
+    localStorage.setItem('events', JSON.stringify(events));
+    localStorage.setItem('attendance', JSON.stringify(attendance));
+    renderAll();
+}
+
+function editEvent(id) {
+    const ev = events.find(e => e.id === id);
+    document.getElementById('edit-id').value = ev.id;
+    document.getElementById('title').value = ev.title;
+    document.getElementById('date').value = ev.date;
+    document.getElementById('description').value = ev.description;
+    document.getElementById('form-title').innerText = "Edit Event";
+    document.getElementById('cancel-edit').style.display = "inline-block";
+}
+
+function resetEventForm() {
+    eventForm.reset();
+    document.getElementById('edit-id').value = "";
+    document.getElementById('form-title').innerText = "Add New Event";
+    document.getElementById('cancel-edit').style.display = "none";
+}
+
+// --- ATTENDANCE MANAGEMENT ---
+const attForm = document.getElementById('attendanceForm');
+attForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const eventId = parseInt(document.getElementById('att-event-id').value);
+    const status = document.getElementById('att-status').value;
+
+    const existingIndex = attendance.findIndex(a => a.eventId === eventId);
+    if (existingIndex > -1) {
+        attendance[existingIndex].status = status;
+    } else {
+        attendance.push({ eventId, status });
+    }
+
+    localStorage.setItem('attendance', JSON.stringify(attendance));
+    renderAll();
+    Swal.fire('Updated', 'Attendance marked!', 'success');
+});
+
+function renderAttendance() {
+    const list = document.getElementById('attendance-records');
+    list.innerHTML = attendance.map(att => {
+        const event = events.find(e => e.id === att.eventId);
+        return `
+            <tr>
+                <td>${event ? event.title : 'Deleted Event'}</td>
+                <td class="${att.status}">${att.status}</td>
+                <td><button onclick="deleteAttendance(${att.eventId})">Remove</button></td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function deleteAttendance(eventId) {
+    attendance = attendance.filter(a => a.eventId !== eventId);
+    localStorage.setItem('attendance', JSON.stringify(attendance));
+    renderAll();
+}
+
+function updateSelectors() {
+    const select = document.getElementById('att-event-id');
+    select.innerHTML = '<option value="">Select Event</option>' + 
+        events.map(ev => `<option value="${ev.id}">${ev.title}</option>`).join('');
+}
+
+// --- DASHBOARD ---
+function renderDashboard() {
+    const total = events.length;
+    const attended = attendance.filter(a => a.status === 'Present').length;
+    const rate = total > 0 ? Math.round((attended / total) * 100) : 0;
+
+    document.getElementById('dash-attendance-rate').innerText = `${rate}% attendance rate`;
+    document.getElementById('dash-attendance-count').innerText = `${attended} events attended`;
+    document.getElementById('dash-total-events').innerText = `Total Events: ${total}`;
+}
+
+// Initial Load
+renderAll();

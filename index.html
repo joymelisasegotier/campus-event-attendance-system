@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Connect - All-in-One</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="logo">Campus Connect</div>
+    <div class="nav">
+        <button onclick="showSection('dashboard')">Dashboard</button>
+        <button onclick="showSection('events')">Events</button>
+        <button onclick="showSection('attendance')">Attendance</button>
+    </div>
+</div>
+
+<div class="main-container">
+    
+    <section id="dashboard" class="content-section">
+        <div class="hero">
+            <h1>Welcome to Campus Connect</h1>
+            <p>Your gateway to campus participation.</p>
+        </div>
+        <div class="cards">
+            <div class="card">
+                <h3>Attendance Summary</h3>
+                <p id="dash-attendance-rate">0% attendance rate</p>
+                <p id="dash-attendance-count">0 events attended</p>
+            </div>
+            <div class="card">
+                <h3>Quick Stats</h3>
+                <p id="dash-total-events">Total Events: 0</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="events" class="content-section" style="display:none;">
+        <div class="events-grid">
+            <div class="events-list-container">
+                <h2>Upcoming Events</h2>
+                <div id="events-list"></div>
+            </div>
+            <div class="add-event-card">
+                <h3 id="form-title">Add New Event</h3>
+                <form id="eventForm">
+                    <input type="hidden" id="edit-id">
+                    <input type="text" id="title" placeholder="Event Title" required>
+                    <input type="datetime-local" id="date" required>
+                    <textarea id="description" placeholder="Event Description"></textarea>
+                    <button type="submit" id="submit-btn" style="background-color: aqua;">Save Event</button>
+                    <button type="button" id="cancel-edit" style="display:none;" onclick="resetEventForm()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="attendance" class="content-section" style="display:none;">
+        <h2>Attendance Tracker</h2>
+        <div class="card">
+            <form id="attendanceForm">
+                <select id="att-event-id" required>
+                    <option value="">Select Event</option>
+                </select>
+                <select id="att-status">
+                    <option value="Present">Present</option>
+                    <option value="Absent">Absent</option>
+                </select>
+                <button type="submit" style="background-color: aqua;">Mark Attendance</button>
+            </form>
+        </div>
+        <div class="card">
+            <table class="attendance-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-records"></tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
